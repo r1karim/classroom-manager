@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!--Setting encoding to utf-8-->
+	<meta charset='utf-8'>
+	<meta name='viewport' content="width=device-width, initial-scale=1 ">
+	<!--including bootstrap-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<link rel='stylesheet' type='text/css' href="{{ url_for('static', filename='css/styles.css') }}">
+	<!--setting webpage title if there is any-->
+	{% if title %}
+		<title>Smart class - {{title}}</title>
+	{% else %}
+		<title>Smart class</title>
+	{% endif %}
+	<!--including additional bootstrap scripts-->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://kit.fontawesome.com/b051312dea.js" crossorigin="anonymous"></script>
+</head>
+<body style='padding-top:2.8em'>
+	<!-- This is were the other html file's code will go, they will get all of this code -->
+	{% block content %}{% endblock %}
+</body>
+</html>

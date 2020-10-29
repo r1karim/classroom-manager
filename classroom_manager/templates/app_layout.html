@@ -1,0 +1,20 @@
+<div class="w3-sidebar w3-bar-block my_second_sidebar" style='background-color: rgb(223, 231, 232);'>
+  <div class='titlesection'>
+    <h4 id=sidebartitle>{{title}}</h4>
+  </div>
+  <hr>
+  <div id=menulist>
+    {% for item in data %}
+      <div>
+        <a class="w3-bar-item w3-button classroom" id="%{{item.id}}" style='text-decoration: none; width:100%'><img src="{{url_for('static', filename='imgs/'+item.image_file)}}" width=25> {{item.name}}<i class='fas fa-cog float-right'></i></a>
+        <ul class="channels">
+          <!--Classroom channels goes here-->
+        </ul>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div id=app_body>
+  {% block app %}{% endblock %}
+</div>

@@ -1,0 +1,69 @@
+{% extends "app_layout.html" %}
+{% block app %}
+<div class="channel_display" id=channel_display>
+	<span>
+		<div class="upper_part">
+			<p class=title>
+				No channel to display...
+			</p>
+			<div class='float-right'> </div>
+		</div>
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+		  <li class="nav-item">
+		    <a class="nav-link active" id="posts-tab" data-toggle="tab" href="#posts" role="tab" aria-controls="posts" aria-selected="true">Posts</a>
+		  </li>
+		  <li class="nav-item">
+		  	<a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="true">Notes</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" id="assignments-tab" data-toggle="tab" href="#assignments" role="tab" aria-controls="assignments" aria-selected="false">Assignments</a>
+		  </li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+		  <div class="tab-pane fade show active" id="posts" role="tabpanel" aria-labelledby="posts-tab">
+		  	<div class='messagescontainer'>
+				<div class="message bg-light"><span><b>SC. Bot</b> just now.</span><p>No messages to display...</p></div>
+			</div>
+			<button class='btn btn-primary' id='newconversation'>New conversation</button>
+			<form method='POST' id='new_conversation_form'>
+				<input id=new_conversation_input type='text' placeholder="Start a new conversation." class='textinput'>
+			</form>
+		  </div>
+		  <div class="tab-pane fade" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
+
+		  </div>
+		  <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab" style='margin-top: 5px;'>
+			<div id=notes_container>
+				<div class="row">
+				  <div class="col-2">
+				    <div class="list-group" id="note-list" role="tablist">
+				      <!--<a  class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>-->
+				    </div>
+				  </div>
+					<div class="col-4">
+					    <div class="tab-content" id="note-container">
+					      <!--<div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...</div>-->
+					  	</div>
+					</div>
+				</div>
+			</div>
+
+			{% if current_user %}
+			<form id=note_form class="form-inline" method="POST" enctype="multipart/form-data">
+				<div class="input-group">
+				  <textarea type="text" class="form-control" placeholder="Note title goes here" name='note_title'></textarea>
+				  <textarea type="text" class="form-control" placeholder="Note text goes here" aria-label="Recipient's username" aria-describedby="basic-addon2" name="note_text"></textarea>
+				  <div class="input-group-append">
+				    <input type="file" name=note_image class="btn btn-outline-secondary" value="Upload a picture">
+				    <input type=submit class="btn btn-outline-secondary">
+				  </div>
+				</div>
+			</form>
+			{% endif %}
+		  </div>
+		</div>
+	</span>
+
+</div>
+
+{% endblock app %}
