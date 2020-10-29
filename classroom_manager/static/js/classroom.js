@@ -52,6 +52,7 @@ $(document).ready(function() {
 		let id = parseInt($(this).attr('id').slice(1, $(this).attr('id').length), 10);
 		$.ajax({url:`retrieve-channels/${id}`, type:'POST'}).done((data) => {
 			console.log(data);
+			document.getElementsById("OVERLAY").style.height = "100%";
 			if(data['result'].length > 0){
 				let result = '';
 				for(let i = 0; i < data['result'].length; i++) {
