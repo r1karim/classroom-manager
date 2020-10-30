@@ -19,13 +19,12 @@ const clear_notes = () => {
 	notes.html('');
 	notes_list.html('');
 }
-const add_note = (note_data) => {
+const add_note = (note_data, active) => {
 	const note_list = $('#note-list');
 	const note_container = $('#note-container');
-	test = note_data.note_id.toString(10).replaceAll(' ', '_');
-	let id =  note_data.note_title + test;
-	note_list.append(`<a class="list-group-item list-group-item-action" data-toggle="list" href="#${id}" role="tab">${note_data.note_title}</a>`);
-	note_container.append(`<div class="tab-pane" id="${id}" role="tabpanel"><img src="${note_data.note_img}" style='max-width:600px; max-height:600px;' />${note_data.note_text}</div>`);
+	let id = note_data.note_title.replaceAll(' ', '') + note_data.note_id.toString(10);
+	note_list.append(`<a class="list-group-item list-group-item-action ${active}" data-toggle="list" href="#${id}" role="tab">${note_data.note_title}</a>`);
+	note_container.append(`<div class="tab-pane ${active}" id="${id}" role="tabpanel"><img src="${note_data.note_img}" style='max-width:600px; max-height:600px;' /><p>${note_data.note_text}</p></div>`);
 }
 $(document).ready(function() {
 	$('body').click(function(e) {
@@ -45,6 +44,7 @@ $(document).ready(function() {
 		if(selected_channel != null) {
 			$.ajax({data: form_data,contentType:false, processData:false, url:'add-note', method:'POST'}).done(function(data) {
 				$("#note_form").trigger("reset");
+				add_note(data['new_note'], '');
 			});
 		}
 	});
@@ -81,9 +81,20 @@ $(document).ready(function() {
 		$.ajax({url:`retrieve-notes/${id}`, type:'POST'}).done((data) => {
 			console.log(data);
 			clear_notes();
-			for(let i = 0;i < data.length; i++) {
-				add_note(data[i]);
+			if(data.length) {
+				for(let i = 0;i < data.length; i++) {
+					if(i == 0) {
+						add_note(data[i], 'active');
+					}
+					else {
+						add_note(data[i], '');
+					}
+				}	
 			}
+			else {
+
+			}
+
 		});
 	});
 	$(document).on('click', '#newconversation', function() {

@@ -69,7 +69,7 @@ def app_classrooms():
 
 @app.route('/add-note', methods=['POST'])
 def add_note():
-    if note_title and note_text and note_channel_id: 
+    if request.form['note_title'] and request.form['note_text'] and request.form['channel_id']: 
         note_title = request.form['note_title']
         note_text = request.form['note_text']
         note_channel_id = request.form['channel_id']
@@ -80,7 +80,7 @@ def add_note():
         new_note = Note(author_id=current_user.get_id(), title=note_title, note_text=note_text,note_imgs=filename, channel_id=note_channel_id)
         db.session.add(new_note)
         db.session.commit()
-        return jsonify({'data': 'success'})
+        return jsonify({'new_note': {'note_title':new_note.title, 'note_id': new_note.id, 'note_text': new_note.note_text, 'note_img': url_for('static', filename='imgs/' + new_note.note_imgs)}})
     else:
         pass
 @app.route('/create-team', methods=['POST'])
