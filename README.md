@@ -15,4 +15,4 @@ Created by [Top Of Tech](http:www.github.com/Top-Of-Tech) and [adri711](http:www
     Run this command: `python run.py`
     
 3. Go to the website
-    Go to this url: [](http:127.0.0.7:5000)
+    Go to this url: [http:127.0.0.7:5000](http:127.0.0.7:5000)
