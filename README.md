@@ -18,3 +18,9 @@ NOTE: Make sure to run all commands in the same directory as the files!
     
 3. Go to the website  
     Go to this url: [http:127.0.0.7:5000](http:127.0.0.7:5000)
+
+4. Register
+
+5. Sign in with your email and password
+
+6. Explore the app!
