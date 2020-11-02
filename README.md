@@ -24,3 +24,6 @@ NOTE: Make sure to run all commands in the same directory as the files!
 5. Sign in with your email and password
 
 6. Explore the app!
+
+
+## Screenshots
