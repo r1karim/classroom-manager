@@ -1,2 +1,2 @@
-# classroom_manager
+# Classroom Manager
  
