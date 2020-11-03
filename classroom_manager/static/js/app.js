@@ -1,4 +1,5 @@
 /* Client script */
+document.body.style.zoom = 0.8;
 
 const app_container = $('#app_container');
 const app_body = app_container.children("#app_body");
@@ -34,7 +35,7 @@ $(document).ready(function() {
 				$('#join_notice').html(data.error);
 			}
 			else {
-				$('#menulist').append(`<div><a class="w3-bar-item w3-button classroom" id='%${data.result.id}' style='text-decoration: none; width:100%'><img src="${data.url_for_img}" width=25></img> ${data.result.name}</a><ul class="channels"></ul></div>`);
+				$('#menulist').append(`<div><a class="w3-bar-item w3-button classroom" id='%${data.result.id}' style='text-decoration: none; width:100%'><img src="${data.url_for_img}" width=25></img> ${data.result.name} <i class='fas fa-cog float-right'></i></a><ul class="channels"></ul></div>`);
 				socket.emit('join-room', data.result.id);
 			}
 		});
@@ -68,7 +69,7 @@ $(document).ready(function() {
 					$("#teammodal").hide();
 				}, 1624);
 				if($('#classrooms').hasClass('selected_item')) {
-					$('#menulist').append(`<div><a class='classroom w3-bar-item w3-button' style='text-decoration: none; width:100%' id="%${data.new_classroom.id}"><img src=${data.new_classroom.imgurl} width=25> ${data.new_classroom.name} </a><ul class='channels'></ul></div>`);
+					$('#menulist').append(`<div><a class='classroom w3-bar-item w3-button' style='text-decoration: none; width:100%' id="%${data.new_classroom.id}"><img src=${data.new_classroom.imgurl} width=25> ${data.new_classroom.name} <i class='fas fa-cog float-right'></i></a><ul class='channels'></ul></div>`);
 				}
 			}
 		});
@@ -83,4 +84,7 @@ const toggle_class_creator = () => {
 const toggle_class_join = () => {
 	$('#joinclass_modal').css('display', 'block');
 	$('#join_notice').css('display', 'none');
+}
+const close_settings_menu = () => {
+	$('#classroom_settings').css('width', '0%');
 }

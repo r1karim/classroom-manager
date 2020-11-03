@@ -1,10 +1,11 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, jsonify
 from classroom_manager.forms import RegistrationForm, LoginForm
 from classroom_manager import app, bcrypt, db, socketio
-from classroom_manager.models import User, Classroom, Membership, Channel, Message, Note
+from classroom_manager.models import User, Classroom, Membership, Channel, Message, Note, Assignment, DirectMessage
 from flask_login import login_user, current_user, logout_user, login_required
 from classroom_manager.utils import generate_code
 from werkzeug.utils import secure_filename
+from types import SimpleNamespace
 import os
 
 @app.route("/")
@@ -54,18 +55,26 @@ def __app__():
 
 @app.route('/app/chats', methods=['POST'])
 def app_chats():
-    contacts = set()
-    return render_template('chats.html', title='Contacts', data=contacts)
-
+    users = set()
+    messages = DirectMessage.query.filter((DirectMessage.receiver_id==current_user.get_id()) | (DirectMessage.sender_id==current_user.get_id())).all()
+    users.add(*[message.receiver_id if int(message.receiver_id) != int(current_user.get_id()) else int(message.sender_id) for message in messages])
+    contacts = []
+    for user in User.query.filter(User.id.in_(users)).all():
+        contact = SimpleNamespace()
+        contact.id = user.id
+        contact.name = user.username
+        contacts.append(contact)
+    return render_template('chats.html', title='Contacts', data=contacts, type='contact')
+'''
 @app.route('/retrieve-contacts', methods=['POST'])
 def retrieve_contacts():
-    pass
+    pass'''
 
 @app.route('/app/classrooms', methods=['POST'])
 def app_classrooms():
     memberships = Membership.query.filter(Membership.user_id==current_user.get_id()).all()
     classrooms = Classroom.query.filter(Classroom.id.in_([membership.classroom_id for membership in memberships])).all()
-    return render_template('classrooms.html', title='Classrooms', data=classrooms)
+    return render_template('classrooms.html', title='Classrooms', data=classrooms, type='classroom')
 
 @app.route('/add-note', methods=['POST'])
 def add_note():
@@ -83,6 +92,23 @@ def add_note():
         return jsonify({'new_note': {'note_title':new_note.title, 'note_id': new_note.id, 'note_text': new_note.note_text, 'note_img': url_for('static', filename='imgs/' + new_note.note_imgs)}})
     else:
         pass
+
+@app.route('/classroom-settings/<classroom_id>', methods=['POST'])
+def classroom_settings(classroom_id):
+    specified_classroom = Classroom.query.filter(Classroom.id==classroom_id).first()
+    if specified_classroom:
+        membership = Membership.query.filter(Membership.classroom_id==classroom_id, Membership.user_id==current_user.get_id()).first()
+        members = Membership.query.filter(Membership.classroom_id==classroom_id)
+        members = User.query.filter(User.id.in_([member.user_id for member in members]))
+        permission = membership.role == 'super'
+        return jsonify({'room_code': specified_classroom.code, 
+            'permission': permission, 
+            'members': [{'name': member.first_name + ' ' + member.last_name, 
+            'id': member.id} for member in members if int(member.id) != int(current_user.get_id())],
+            'channels': [{'id': channel.id, 'name': channel.name} for channel in Channel.query.filter(Channel.classroom_id==classroom_id)]})
+    else:
+        return jsonify({'error': 'Classroom wasn\'t found.'})
+
 @app.route('/create-team', methods=['POST'])
 def create_team():
     #getting data from the form
@@ -95,8 +121,7 @@ def create_team():
         db.session.flush() #using flush just so we can get the id of the classroom
         new_classroom.code = generate_code(new_classroom.id)
         db.session.flush()
-        #creating general channel for the classroom
-        new_channel = Channel(name="General", classroom_id=new_classroom.id)
+        new_channel = Channel(name="General", classroom_id=new_classroom.id) #creating general channel for the classroom
         db.session.add(new_channel)
         db.session.flush() #same here...
         #Creating membership for the user and classroom
@@ -120,14 +145,14 @@ def create_team():
 def join_team():
     team_code = request.form['code']
     if team_code:
-        result = Classroom.query.filter(Classroom.code==team_code).first()
-        if result:
-            new_membership = Membership(user_id=current_user.get_id(), classroom_id=result.id, role='regular')
+        classroom_id = Classroom.query.filter(Classroom.code==team_code).first()
+        if classroom_id:
+            new_membership = Membership(user_id=current_user.get_id(), classroom_id=classroom_id.id, role='regular')
             db.session.add(new_membership)
             db.session.commit()
-            return jsonify({'result': {'id': result.id,
-                'name': result.name}, 
-                'url_for_img': url_for('static', filename='imgs/'+ result.image_file)})
+            return jsonify({'result': {'id': classroom_id.id,
+                'name': classroom_id.name}, 
+                'url_for_img': url_for('static', filename='imgs/'+ classroom_id.image_file)})
         return jsonify({'error': "given code has either expired or is not valid"})
     else: 
         return jsonify({'error': 'given code is invalid'})
@@ -136,6 +161,11 @@ def join_team():
 def retrieve_notes(channel):
     notes = Note.query.filter(Note.channel_id==channel)
     return jsonify([{'author_id': note.author_id, 'note_title': note.title,'note_id': note.id,'note_text': note.note_text, 'note_img': url_for('static', filename='imgs/'+note.note_imgs) if note.note_imgs else None} for note in notes])
+
+@app.route('/retrieve-assignments/<channel>', methods=['POST'])
+def retrieve_assignments(channel):
+    assignments = Assignment.query.filter(Assignment.channel_id==channel)
+    return jsonify([{'text': assignment.assignment_text, 'duedate': assignment.due_date} for assignment in assignments])
 
 @app.route('/retrieve-channels/<classroom>', methods=['POST'])
 def retrieve_channels(classroom):

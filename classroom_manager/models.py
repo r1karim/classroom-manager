@@ -9,7 +9,6 @@ def load_user(user_id):
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    membership = db.relationship('Membership', backref='classroom', lazy=True)
     first_name = db.Column(db.String(25), nullable=False)
     last_name = db.Column(db.String(25), nullable=False)
     username = db.Column(db.String(20), unique=True, nullable=False)
@@ -20,6 +19,7 @@ class User(db.Model, UserMixin):
     notes = db.relationship('Note', backref='author', lazy=True)
     assignments = db.relationship('Assignment', backref='author', lazy=True)
     messages = db.relationship('Message', backref='author', lazy=True)
+    membership = db.relationship('Membership', backref='classroom', lazy=True)
 
     def __repr__(self):
         return f"User(username: '{self.username}', email: '{self.email}', profile_img: '{self.image_file}')"
@@ -91,3 +91,19 @@ class Channel(db.Model):
 
     def __repr__(self):
         return f"Channel(classroom: '{self.classroom_id}', name: '{self.name}')"
+
+class Ban(db.Model): #hasnt been fully implemented yet
+    id = db.Column(db.Integer, primary_key=True) 
+    classroom_id = db.Column(db.Integer, db.ForeignKey('classroom.id'), nullable=False)
+    def __repr__(self):
+        return f"Ban(classroom: '{self.classroom_id}', user_id: '{self.user_id}')"
+
+class DirectMessage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, nullable=False)
+    receiver_id = db.Column(db.Integer, nullable=False)
+    content = db.Column(db.String(100), nullable=False)
+    date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"Message(author_id: '{self.sender_id}')"

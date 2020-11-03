@@ -6,10 +6,12 @@
   <div id=menulist>
     {% for item in data %}
       <div>
-        <a class="w3-bar-item w3-button classroom" id="%{{item.id}}" style='text-decoration: none; width:100%'><img src="{{url_for('static', filename='imgs/'+item.image_file)}}" width=25> {{item.name}}<i class='fas fa-cog float-right'></i></a>
-        <ul class="channels">
-          <!--Classroom channels goes here-->
-        </ul>
+        <a class="w3-bar-item w3-button {{type}}" id="%{{item.id}}" style='text-decoration: none; width:100%'>{% if type == 'classroom' %}<img src="{{url_for('static', filename='imgs/'+item.image_file)}}" width=25> {{item.name}}<i class='fas fa-cog float-right'></i>{% endif %}</a>
+        {% if type == 'classroom' %}
+          <ul class="channels">
+            <!--Classroom channels goes here-->
+          </ul>
+        {% endif %}
       </div>
     {% endfor %}
   </div>

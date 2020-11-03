@@ -21,3 +21,4 @@ login_manager.login_view = 'login'
 from classroom_manager.routes import *
 from classroom_manager.models import User
 from classroom_manager.network import *
+#db.create_all()

@@ -1,5 +1,6 @@
 {% extends "app_layout.html" %}
 {% block app %}
+<span id='user_id' value='{{current_user.get_id()}}'></span>
 <div class="channel_display" id=channel_display>
 	<span>
 		<div class="upper_part">
@@ -30,50 +31,98 @@
 			</form>
 		  </div>
 		  <div class="tab-pane fade" id="assignments" role="tabpanel" aria-labelledby="assignments-tab">
-
+			<table class="table table-sm">
+			  <thead>
+			    <tr>
+			      <th scope="col">Text</th>
+			      <th scope="col">Due</th>
+			    </tr>
+			  </thead>
+			  <tbody id='assignments-list'>
+			    <!--<tr>
+			      <td>Mark</td>
+			      <td>Otto</td>
+			      <td>@mdo</td>
+			    </tr>
+			    <tr>
+			      <td>Jacob</td>
+			      <td>Thornton</td>
+			      <td>@fat</td>
+			    </tr>
+			    <tr>
+			      <td colspan="2">Larry the Bird</td>
+			      <td>@twitter</td>
+			    </tr>-->
+			  </tbody>
+			</table>
 		  </div>
 		  <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab" style='margin-top: 5px;'>
 			<div id=notes_container>
 				<div class="row">
 				  <div class="col-2">
 				    <div class="list-group" id="note-list" role="tablist">
-				      <!--<a  class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">Home</a>-->
+				    	<!--Here goes title of the note-->
 				    </div>
 				  </div>
 					<div class="col-7">
 					    <div class="tab-content" id="note-container">
-					      <!--<div class="tab-pane fade show active" id="list-home" role="tabpanel" aria-labelledby="list-home-list">...</div>-->
+					    	<!--here goes text and image of the note-->
 					  	</div>
 					</div>
 				</div>
 			</div>
-
-			{% if current_user %}
 			<form id=note_form class="form-inline" method="POST" enctype="multipart/form-data">
 				<div class="input-group">
 				  <textarea type="text" class="form-control" placeholder="Note title goes here" name='note_title'></textarea>
 				  <textarea type="text" class="form-control" placeholder="Note text goes here" aria-label="Recipient's username" aria-describedby="basic-addon2" name="note_text"></textarea>
-				  <div class="input-group-append">
-				    <input type="file" name=note_image class="btn btn-outline-secondary" value="Upload a picture">
-				    <input type=submit class="btn btn-outline-secondary">
-				  </div>
+			    <input type="file" name=note_image class="btn btn-outline-secondary" value="Upload a picture" accept="image/*">
+			    <input type=submit class="btn btn-outline-secondary">
 				</div>
 			</form>
-			{% endif %}
 		  </div>
 		</div>
 	</span>
+	<div id="classroom_settings" class="overlay">
+	  <a href="javascript:void(0)" class="closebtn" onclick="close_settings_menu()">&times;</a>
+	  <div class="overlay-content">
+	  		<p><b>Classroom code:</b> <span id='code_id'>...</span></p>
+	  		<div style="text-align: center">
+	  			<button class='btn btn-primary' id='leave_classroom'>Leave classroom</button>
+	  			<button class='btn btn-primary permission' id='regenerate_code'>Regenerate code</button>
 
-	<link rel="stylesheet" href={{ url_for('static', filename='css/curtain_wall_classroom.css') }}>
-	<div id="OVERLAY" class="classroom-settings-curtain-menu">
-		<div class="overlay-content">
-			<a href="#">About</a>
-			<a href="#">Services</a>
-			<a href="#">Clients</a>
-			<a href="#">Contact</a>
-		  </div>
+	  		</div>
+	  		<hr class="permission">
+	  		<p class="action-title permission">Channels:</p>
+	  		<div class="action-container permission">
+				<select class="form-control" id=action_selection>
+					<option>action</option>
+					<option>rename</option>
+					<option>delete</option>
+					<option>add</option>
+				</select><br>
+				<select class="form-control" id=channel_selection>
+					<option>none</option>
+				</select>
+				<br>
+					<input class='form-control' id='name_input' type='text' placeholder="Enter the name you wish to use" style='display:none;'>
+				<br>
+				<input id='channels_action_submission_button' type='button' value='submit action' class="btn btn-primary">
+	  		</div>
+	  		<hr class="permission">
+	  		<p class="action-title permission">Users:</p>
+	  		<div class="action-container permission">
+				<select class="form-control" id=action_selection_users>
+					<option>action</option>
+					<option>kick</option>
+				</select>
+				<br>
+				<select class="form-control" id=user_selection>
+					<option>none</option>
+				</select>
+				<br><input id='users_action_submission_button' type='button' value='submit action' class="btn btn-primary">	
+	  		</div>
+	  </div>
 	</div>
-
 </div>
 
 {% endblock app %}
