@@ -4,14 +4,33 @@
   </div>
   <hr>
   <div id=menulist>
+  	  <div>
+  	  	<a class="w3-bar-item w3-button" onclick="toggle_username_input()">Add a new contact</a>
+  	  	<form method='POST' id='username_input_id' style="display:none;">
+  	  	 <div class="input-group mb-3">
+		  <div class="input-group-prepend">
+		    <span class="input-group-text" id="basic-addon1">@</span>
+		  </div>
+		  <input type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1" id="username_input">
+	 	 </div>
+		</form>
+  	  </div>
     {% for item in data %}
       <div>
-        <a class="w3-bar-item w3-button" id="*{{item.id}}" style='text-decoration: none; width:100%'><img width=35 class='user-avatar' src="{{url_for('static', filename='imgs/defaultuser-icon.png')}}"> {{item.name}}</a>
+        <a class="w3-bar-item w3-button user" id="*{{item.id}}" style='text-decoration: none; width:100%'><img width=35 class='user-avatar' src="{{url_for('static', filename='imgs/defaultuser-icon.png')}}"> {{item.name}}</a>
       </div>
     {% endfor %}
   </div>
 </div>
-
 <div id=app_body>
-  {% block app %}{% endblock %}
+  <div class="upper_part">
+    <div class='title' id='chat_title'>No user chat to display...</div>
+  </div>
+  <div class="user_chat_container" id='user_chat_box'>
+    <div class='message bg-light'><span><b>SC. Bot</b> Just now</span><p>No messages to display.</p></div>
+    <!--Here goes directmessages-->
+  </div>
+  <form method="POST" id='message_input'>
+    <input type='text' class='form-control' placeholder="write new message...">
+  </form>
 </div>

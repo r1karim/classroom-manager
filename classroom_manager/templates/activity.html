@@ -1,1 +1,8 @@
-<div class='app_body'><h1>Hello, World!</h1></div>
+<div class='app_body' style='margin-left: 1em'>
+	<h3>Your recent messages</h3>
+	<div class='messagescontainer'>
+		{% for message in data %}
+			<div class='message bg-light'><span><b>You</b> on {{message.date}}</span><p>{{message.contents}}</p></div>
+		{% endfor %}
+	</div>
+</div>

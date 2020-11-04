@@ -9,6 +9,9 @@ const set_chat_title = (server_title,channel_title) => {
 	chat_title.html(`<b>${server_title}</b> ${channel_title}`);
 	$(chat_title).find('i').remove();
 }
+const clear_submissions = () => {
+	$('#submissions').html('');
+}
 const add_message = (message_data) => {
 	const chat_box = $('#channel_display .messagescontainer').first();
 	chat_box.append(`<div class="message bg-light"><span><b>${message_data.author.name}</b> ${message_data.date}</span><p>${message_data.content}</p></div>`);
@@ -31,15 +34,30 @@ const add_note = (note_data, active) => {
 	}
 	note_container.append(`<div class="tab-pane ${active}" id="${id}" role="tabpanel">${additional_text}<p>${note_data.note_text}</p></div>`);
 }
-const add_assignment = (assignment_data) => {
+const add_assignment = (assignment_data, is_super) => {
 	const assignment_list = $('#assignments-list');
-	assignment_list.append(`<tr><td>${assignment_data.text}</td><td>${assignment_data.duedate}</td> </tr>`);
+	if (assignment_data.id) {
+		if(is_super) {
+			assignment_list.append(`<tr value=${assignment_data.id}><td>${assignment_data.text}</td><td>${assignment_data.duedate}</td><td><button class='show_submission_button' data-target='#submissions'>View submissions</button> </td> </tr>`);
+		}
+		else {
+			if (assignment_data.submission_state) {
+				assignment_list.append(`<tr value=${assignment_data.id}><td>${assignment_data.text}</td><td>${assignment_data.duedate}</td><td>Already submitted</td> </tr>`);
+			}
+			else {
+				assignment_list.append(`<tr value=${assignment_data.id}><td>${assignment_data.text}</td><td>${assignment_data.duedate}</td><td><form id='homework_submission'><input type=file name=homework><button>submit</button></form></td></tr>`);
+
+			}
+		}	
+	}
 }
 const clear_assignments = () => {
 	const assignment_list = $('#assignments-list');
 	assignment_list.html('');
 }
-
+const toggle_submissions_menu = () => {
+	$('#testest').css('display', 'block');
+}
 $(document).ready(function() {
 	$('body').click(function(e) {
 		var target = $(e.target);
@@ -117,7 +135,6 @@ $(document).ready(function() {
         	$('#name_input').css('display', 'none');
         }
 	});
-
 	$(document).on('click', '.channels li', function() {
 		let id = parseInt($(this).attr('id').slice(1, $(this).attr('id').length), 10); //getting channel id
 		selected_channel = id;
@@ -153,13 +170,17 @@ $(document).ready(function() {
 		$.ajax({url:`retrieve-assignments/${id}`, type:'POST'}).done((data) => {
 			console.log(data);
 			clear_assignments();
-			if(data.length) {
-				for(let i = 0; i  < data.length; i++) {
-					add_assignment(data[i]);
+			if(data.assignments.length) {
+				result = false;
+				if(data.role == 'super') {
+					result = true;
+				}
+				for(let i = 0; i  < data.assignments.length; i++) {
+					add_assignment(data.assignments[i], result);
 				}
 			}
 			else {
-				new_assignment = {'text': 'none', 'duedate': 'none'};
+				new_assignment = {'text': 'none', 'duedate': 'none', 'submission_state': '.'};
 				add_assignment(new_assignment);
 			}
 		});
@@ -188,6 +209,36 @@ $(document).ready(function() {
 		clear_chatbox();
 		close_settings_menu();
 		$(`[id='%${selected_classroom}']`).parent().remove();
+	});
+	$(document).on('submit', "#assignment_form", function(event) {
+		event.preventDefault();
+		$('#selected_channel_input').val(selected_channel);
+		$.ajax({url:'/add-assignment', type:'POST', data: $('#assignment_form').serialize(), success: function(data) {
+			add_assignment(data, true);
+		}});
+	});
+	$(document).on('submit', '#homework_submission', function(event) {
+		event.preventDefault();
+		let form_data = new FormData($('#homework_submission')[0]);
+		form_data.append('channel_id', selected_channel);
+		form_data.append('assignment_id', parseInt($('#homework_submission').closest('tr').attr('value'), 10));
+		event.preventDefault();
+		if(selected_channel != null) {
+			$.ajax({data: form_data,contentType:false, processData:false, url:'/homework-submit', method:'POST'}).done(function(data) {
+				$('#homework_submission').html('Already submitted');
+			});
+		}
+	});
+	$(document).on('click', '.show_submission_button', function() {
+		id = parseInt($(this).closest('tr').attr('value'), 10);
+		console.log(id);
+		$.ajax({url:`retrieve-submissions/${id}`, type:'POST'}).done(function(data) {
+			clear_submissions();
+			$('#submissions').append('<tr><th>Username</th> <th>Homework File</th></tr>');
+			for(i = 0; i < data.length; i++) {
+				$('#submissions').append(`<tr><td>${data[i].name}</td><td><a href='${data[i].file}' download>Download submission file</a></td></tr>`);
+			}
+		});
 	});
 });
 socket.on('channel_conversation', function(data) {

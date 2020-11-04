@@ -1,0 +1,138 @@
+ body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif
+}
+.bgImage{
+    width: 100%;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    z-index: -1111;
+}
+
+.nav_bar {
+    width: 100%;
+    height: 70px;
+    color: #fff;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    position: fixed;
+    z-index: 1111;
+}
+
+.nav_bar h1 {
+    margin: 0;
+    padding: 0; 
+    text-transform: uppercase;
+    float: left;
+    line-height: 70px;
+    margin-left: 70px;
+}
+
+nav {
+    float: right;
+}
+
+nav ul {
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {
+    list-style: none;
+    display: inline-block;
+}
+
+nav ul li a {
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    padding: 0 30px;
+    line-height: 70px;
+    display: block;
+    transition: .4s;
+}
+
+nav ul li a:hover {
+    color: #e74c3c;
+    transition: .4s;
+}
+
+.overay {
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,.6);
+}
+
+.text {
+    position: absolute;
+    top: 40%;
+    left: 10%;
+    color: #fff;
+    z-index: 22222;
+    width: 500px;
+    height: 300px;
+    background: transparent;
+}
+
+.text:before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 7%;
+    transform: translate(-50%, -50%);
+    width: 70px;
+    height: 5px; 
+    background: #e74c3c;
+}
+
+.text h1 {
+    margin: 0;
+    padding: 0;
+    font-weight: 700;
+    color: #e74c3c;
+    font-size: 50px;
+}
+
+.text h1 span {
+    font-weight: normal;
+    color: #F2F2F2;
+}
+
+.text p {
+    padding: 20px 50px 20px 0;
+    line-height: 22px;
+    color: #F2F2F2;
+    text-transform: uppercase;
+}
+
+button {
+    border: none;
+    background: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+    font-size: 16px; 
+    padding: 10px 30px;
+    border-radius: 5px;
+    transition: .3s;
+    text-transform: uppercase;
+}
+
+.get-now {
+    background: #e74c3c;
+    border: 1px solid #e74c3c;
+    margin-right: 20px; 
+}
+
+.get-now:hover {
+    border: 1px solid #fff;
+    background: #fff;
+    color: #000;
+    transition: .3s;
+}
+
+.book-place:hover {
+    background: #e74c3c;
+    border: 1px solid #e74c3c;
+    transition: .3s;
+}

@@ -11,30 +11,25 @@
       <li class="nav-item">
         <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
       </li>
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          More
-        </a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href='#' id='createteambtn' onClick='toggle_class_creator()'>Create a team</a>
-          <a class="dropdown-item" href='#' id='jointeambtn' onClick='toggle_class_join()'>Join a team</a>
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="#">Settings</a>
-        </div>
+      <li class="nav-item">
+       <a class="nav-link" href='#' id='createteambtn' onClick='toggle_class_creator()'>Create a team</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href='#' id='jointeambtn' onClick='toggle_class_join()'>Join a team</a>
       </li>
     </ul>
   </div>
 </nav>
 <!-- Sidebar -->
 <div class="sidebar w3-sidebar w3-bar-block w3-animate-left" id="mySidebar">
-  <a class="w3-bar-item w3-button" name='activity'id=activity><img width=35 src="{{url_for('static', filename='imgs/notification-icon.png')}}"/>Activity</a>
+  <a class="w3-bar-item w3-button selected_item" name='activity'id=activity><img width=35 src="{{url_for('static', filename='imgs/notification-icon.png')}}"/>Activity</a>
   <a class="w3-bar-item w3-button" name='chats'id=chats><img width=35 src="{{url_for('static', filename='imgs/chat-icon.png')}}"/>Chat</a>
   <a class="w3-bar-item w3-button" name='classrooms' id=classrooms><img width=35 src="{{url_for('static', filename='imgs/group-icon.png')}}"/>Rooms</a>
   <a class="w3-bar-item w3-button" name=meetings id=meetings><img width=35 src="{{url_for('static', filename='imgs/meetings-icon.png')}}"/>Meetings</a>
-  <a class="w3-bar-item w3-button" name=calls id=calls><img width=35 src="{{url_for('static', filename='imgs/call-icon.png')}}"/>Calls</a>
 </div>
 <!--Page content-->
-<div id=app_container> ..</div>
+<div id=app_container>
+</div>
 <!-- The Modal -->
 <div id="teammodal" class="w3-modal">
   <div class="modal-dialog" role="document">
@@ -82,7 +77,16 @@
     </div>
   </div>
 </div>
+
+<script>
+  $.ajax({url: '/app/activity', type: 'POST'}).done(function (data) {
+    $('#app_container').html(data);
+  });
+</script>
+
 <!-- Client scripts -->
 <script src="{{url_for('static', filename='js/app.js')}}"></script>
 <script src="{{url_for('static', filename='js/classroom.js')}}"></script>
+<script src="{{url_for('static', filename='js/chat.js')}}"></script>
+
 {% endblock content %}

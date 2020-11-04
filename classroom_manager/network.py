@@ -2,12 +2,12 @@ from flask import session, redirect, url_for,request
 from flask_login import current_user
 from flask_socketio import SocketIO, emit, send, disconnect, join_room, leave_room
 from classroom_manager import socketio
-from classroom_manager.models import User, Classroom, Membership, Channel, Message, Note
+from classroom_manager.models import User, Classroom, Membership, Channel, Message, Note, DirectMessage
 from classroom_manager.utils import generate_code
 from classroom_manager import db
 from datetime import datetime
 
-users = []
+users = {}
 
 @socketio.on('connect')
 def handle_connections():
@@ -15,7 +15,7 @@ def handle_connections():
     	disconnect()
     	return redirect(url_for('login'))
     user = User.query.filter(User.id==current_user.get_id()).first()
-    users.append({user.username: request.sid})
+    users[user.username] = request.sid
     user_memberships = Membership.query.filter(Membership.user_id==current_user.get_id())
     [join_room(str(user_membership.classroom_id)) for user_membership in user_memberships] #Instead of making a room for every channel we will make a room for every classroom
 
@@ -97,3 +97,13 @@ def user_leave(data):
     if current_user.is_authenticated:
         Membership.query.filter(Membership.user_id==current_user.get_id(), Membership.classroom_id==data['classroom_id']).delete()
         db.session.commit()
+
+@socketio.on('direct_message')
+def direct_message(data):
+    new_direct_message = DirectMessage(sender_id=current_user.get_id(), receiver_id=data['to'], content=data['message'])
+    db.session.add(new_direct_message)
+    db.session.commit()
+    recipient_username = User.query.filter(User.id==data['to']).first().username
+    if recipient_username in users.keys():
+        emit('direct_message', {'content': data['message'], 'author': User.query.filter(User.id==current_user.get_id()).first().username, 'date': 'Just now'}, room=users[recipient_username])
+    emit('direct_message', {'content': data['message'], 'author': User.query.filter(User.id==current_user.get_id()).first().username, 'date': 'Just now'}, room=users[User.query.filter(User.id==current_user.get_id()).first().username])

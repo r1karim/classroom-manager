@@ -10,10 +10,20 @@
 						<div class='form-group'>
 							{{form.email.label(class="form-control-label")}}
 							{{form.email(class="form-control form-control-lg")}}
+							{% if form.email.errors %}
+								{% for error in form.email.errors %}
+									{{error}}
+								{% endfor %}
+							{% endif %}
 						</div>
 						<div class='form-group'>
 							{{form.password.label(class="form-control-label", placeholder='test')}}
 							{{form.password(class="form-control form-control-lg")}}
+							{% if form.password.errors %}
+								{% for error in form.password.errors %}
+									{{error}}
+								{% endfor %}
+							{% endif %}
 						</div>
 						<div class='form-group'>
 							{{form.remember.label(class="form-control-label")}}
@@ -22,6 +32,8 @@
 						<div class='form-group'>
 							{{form.submit(class="btn btn-outline-info")}}
 						</div>
+
+
 					</fieldset>
 				</form>
 			</div>

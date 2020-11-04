@@ -8,6 +8,7 @@ from os.path import join, dirname, realpath
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'Guys quit posting our key' # Our app key, DON'T POST ON GITHUB
 app.config['IMAGE_UPLOADS'] = join(dirname(realpath(__file__)), 'static/imgs/')
+app.config['FILE_UPLOADS'] = join(dirname(realpath(__file__)), 'static/submissions/')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.sqlite3'
 db = SQLAlchemy(app)

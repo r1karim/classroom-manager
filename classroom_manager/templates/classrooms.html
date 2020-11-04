@@ -36,25 +36,23 @@
 			    <tr>
 			      <th scope="col">Text</th>
 			      <th scope="col">Due</th>
+			      <th scope="col">submission</th>
 			    </tr>
 			  </thead>
 			  <tbody id='assignments-list'>
-			    <!--<tr>
-			      <td>Mark</td>
-			      <td>Otto</td>
-			      <td>@mdo</td>
-			    </tr>
-			    <tr>
-			      <td>Jacob</td>
-			      <td>Thornton</td>
-			      <td>@fat</td>
-			    </tr>
-			    <tr>
-			      <td colspan="2">Larry the Bird</td>
-			      <td>@twitter</td>
-			    </tr>-->
 			  </tbody>
 			</table>
+			<form method='POST' id='assignment_form'>
+				<input type='text' name='assignment_text'>
+				<input type="date" name='assignment_date'>
+				<input style='display: none' id='selected_channel_input' name='channel_id'> 
+				<input type="submit" name="">
+			</form>
+			<div>
+				<table id='submissions'>
+					<!-- here goes submissions :3 -->
+				</table>
+			</div>
 		  </div>
 		  <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab" style='margin-top: 5px;'>
 			<div id=notes_container>
@@ -75,8 +73,8 @@
 				<div class="input-group">
 				  <textarea type="text" class="form-control" placeholder="Note title goes here" name='note_title'></textarea>
 				  <textarea type="text" class="form-control" placeholder="Note text goes here" aria-label="Recipient's username" aria-describedby="basic-addon2" name="note_text"></textarea>
-			    <input type="file" name=note_image class="btn btn-outline-secondary" value="Upload a picture" accept="image/*">
-			    <input type=submit class="btn btn-outline-secondary">
+			      <input type="file" name=note_image class="btn btn-outline-secondary" value="Upload a picture" accept="image/*">
+			      <input type=submit class="btn btn-outline-secondary">
 				</div>
 			</form>
 		  </div>

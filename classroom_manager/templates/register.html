@@ -1,46 +1,65 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class='content-section'>
-	<div class='container'>
-		<div class='card'>
-			<div class='card-body'>
-				<form method='POST' action=''>
-					<fieldset class='form-group'>
-						{{form.hidden_tag()}}
-						<div class='form-group'>
-							{{form.name.label(class="form-control-label")}}
-							{{form.name(class="form-control form-control-lg")}}
-						</div>
-						<div class='form-group'>
-							{{form.last_name.label(class="form-control-label")}}
-							{{form.last_name(class="form-control form-control-lg")}}
-						</div>
-						<div class='form-group'>
-							{{form.username.label(class="form-control-label")}}
-							{{form.username(class="form-control form-control-lg")}}
-						</div>
-						<div class='form-group'>
-							{{form.email.label(class="form-control-label")}}
-							{{form.email(class="form-control form-control-lg")}}
-						</div>
-						<div class='form-group'>
-							{{form.password.label(class="form-control-label")}}
-							{{form.password(class="form-control form-control-lg")}}
-						</div>
-						<div class='form-group'>
-							{{form.confirm_password.label(class="form-control-label")}}
-							{{form.confirm_password(class="form-control form-control-lg")}}
-						</div>
-						<div class='form-group'>
-							{{form.student_or_teacher.label(class="form-control-label")}}
-							{{form.student_or_teacher}}
-						</div>
-						<div class='form-group'>
-							{{form.submit(class="btn btn-outline-info")}}
-						</div>
-					</fieldset>
-				</form>
-			</div>
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/home.css')}}">
+<div class='container'>
+	<div class='card'>
+		<div class='card-body'>
+			<form method='POST' action=''>
+				<fieldset class='form-group'>
+					{{form.hidden_tag()}}
+					<div class='form-group'>
+						{{form.name.label(class="form-control-label")}}
+						{{form.name(class="form-control form-control-lg")}}
+					</div>
+					<div class='form-group'>
+						{{form.last_name.label(class="form-control-label")}}
+						{{form.last_name(class="form-control form-control-lg")}}
+					</div>
+					<div class='form-group'>
+						{{form.username.label(class="form-control-label")}}
+						{{form.username(class="form-control form-control-lg")}}
+						{% if form.username.errors %}
+							{% for error in form.username.errors %}
+								{{error}}
+							{% endfor %}
+						{% endif %}
+					</div>
+					<div class='form-group'>
+						{{form.email.label(class="form-control-label")}}
+						{{form.email(class="form-control form-control-lg")}}
+						{% if form.email.errors %}
+							{% for error in form.email.errors %}
+								{{error}}
+							{% endfor %}
+						{% endif %}
+					</div>
+					<div class='form-group'>
+						{{form.password.label(class="form-control-label")}}
+						{{form.password(class="form-control form-control-lg")}}
+						{% if form.password.errors %}
+							{% for error in form.password.errors %}
+								{{error}}
+							{% endfor %}
+						{% endif %}
+					</div>
+					<div class='form-group'>
+						{{form.confirm_password.label(class="form-control-label")}}
+						{{form.confirm_password(class="form-control form-control-lg")}}
+						{% if form.confirm_password.errors %}
+							{% for error in form.confirm_password.errors %}
+								{{error}}
+							{% endfor %}
+						{% endif %}
+					</div>
+					<div class='form-group'>
+						{{form.student_or_teacher.label(class="form-control-label")}}
+						{{form.student_or_teacher}}
+					</div>
+					<div class='form-group'>
+						{{form.submit(class="btn btn-outline-info")}}
+					</div>
+				</fieldset>
+			</form>
 		</div>
 	</div>
 </div>

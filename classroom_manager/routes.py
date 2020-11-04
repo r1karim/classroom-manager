@@ -1,11 +1,12 @@
 from flask import Flask, render_template, url_for, flash, redirect, request, jsonify
 from classroom_manager.forms import RegistrationForm, LoginForm
 from classroom_manager import app, bcrypt, db, socketio
-from classroom_manager.models import User, Classroom, Membership, Channel, Message, Note, Assignment, DirectMessage
+from classroom_manager.models import User, Classroom, Membership, Channel, Message, Note, Assignment, DirectMessage, AssignmentSubmission
 from flask_login import login_user, current_user, logout_user, login_required
 from classroom_manager.utils import generate_code
 from werkzeug.utils import secure_filename
 from types import SimpleNamespace
+from dateutil import parser
 import os
 
 @app.route("/")
@@ -32,7 +33,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"]) # Make sure the form tag has the method, "POST"
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for("app"))
+        return redirect(url_for("__app__"))
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(form.password.data).decode("utf-8") # Hash the password
@@ -55,16 +56,28 @@ def __app__():
 
 @app.route('/app/chats', methods=['POST'])
 def app_chats():
-    users = set()
+    users, contacts = set(), []
     messages = DirectMessage.query.filter((DirectMessage.receiver_id==current_user.get_id()) | (DirectMessage.sender_id==current_user.get_id())).all()
-    users.add(*[message.receiver_id if int(message.receiver_id) != int(current_user.get_id()) else int(message.sender_id) for message in messages])
-    contacts = []
+    [users.add(message.receiver_id) if int(message.receiver_id) != int(current_user.get_id()) else users.add(int(message.sender_id)) for message in messages]
     for user in User.query.filter(User.id.in_(users)).all():
         contact = SimpleNamespace()
         contact.id = user.id
         contact.name = user.username
         contacts.append(contact)
     return render_template('chats.html', title='Contacts', data=contacts, type='contact')
+
+@app.route('/add-contact', methods=['POST'])
+def add_contact():
+    contact = User.query.filter(User.username==request.form['username']).first()
+    if contact and int(contact.id) == int(current_user.get_id()):
+        contact = None #
+    return jsonify({'name': contact.username, 'id': contact.id, 'img_url': url_for('static', filename='imgs/defaultuser-icon.png')}) if contact and contact.id != current_user.get_id() else jsonify({'error': 'user not found.'})
+
+@app.route('/retrieve-directmessages/<user_id>', methods=['POST'])
+def retrieve_directmessages(user_id):
+    messages = DirectMessage.query.filter((DirectMessage.sender_id==user_id) & (DirectMessage.receiver_id==current_user.get_id()) | (DirectMessage.sender_id==current_user.get_id()) & (DirectMessage.receiver_id==user_id))
+    return jsonify({'messages': [{'content': message.content, 'date': message.date, 'author': User.query.filter(User.id==message.sender_id).first().username, 'mein': int(current_user.get_id())==(message.sender_id)} for message in messages]})
+
 '''
 @app.route('/retrieve-contacts', methods=['POST'])
 def retrieve_contacts():
@@ -106,8 +119,7 @@ def classroom_settings(classroom_id):
             'members': [{'name': member.first_name + ' ' + member.last_name, 
             'id': member.id} for member in members if int(member.id) != int(current_user.get_id())],
             'channels': [{'id': channel.id, 'name': channel.name} for channel in Channel.query.filter(Channel.classroom_id==classroom_id)]})
-    else:
-        return jsonify({'error': 'Classroom wasn\'t found.'})
+    return jsonify({'error': 'Classroom wasn\'t found.'})
 
 @app.route('/create-team', methods=['POST'])
 def create_team():
@@ -136,9 +148,7 @@ def create_team():
             },
             'channel': new_channel.id
         })
-    
-    else:
-        return jsonify({'error': 'given name is invalid.'}) #Returning an error if the given name is empty
+    return jsonify({'error': 'given name is invalid.'}) #Returning an error if the given name is empty
 
 
 @app.route('/join-team', methods=['POST'])
@@ -154,8 +164,7 @@ def join_team():
                 'name': classroom_id.name}, 
                 'url_for_img': url_for('static', filename='imgs/'+ classroom_id.image_file)})
         return jsonify({'error': "given code has either expired or is not valid"})
-    else: 
-        return jsonify({'error': 'given code is invalid'})
+    return jsonify({'error': 'given code is invalid'})
 
 @app.route('/retrieve-notes/<channel>', methods=['POST'])
 def retrieve_notes(channel):
@@ -165,7 +174,33 @@ def retrieve_notes(channel):
 @app.route('/retrieve-assignments/<channel>', methods=['POST'])
 def retrieve_assignments(channel):
     assignments = Assignment.query.filter(Assignment.channel_id==channel)
-    return jsonify([{'text': assignment.assignment_text, 'duedate': assignment.due_date} for assignment in assignments])
+    role = Membership.query.filter(Membership.classroom_id==Channel.query.filter(Channel.id==channel).first().classroom_id, Membership.user_id==current_user.get_id()).first().role
+    return jsonify({'role': role, 'assignments': [{'id': assignment.id, 'text': assignment.assignment_text, 'duedate': assignment.due_date, 'submission_state': AssignmentSubmission.query.filter(assignment.id==AssignmentSubmission.assignment_id, AssignmentSubmission.user_id==current_user.get_id()).first() is not None} for assignment in assignments]})
+
+@app.route('/add-assignment', methods=['POST'])
+def add_assignment():
+    get_date = parser.parse(request.form['assignment_date'])
+    new_assignment = Assignment(author_id=current_user.get_id(), due_date=get_date, assignment_text=request.form['assignment_text'], channel_id=request.form['channel_id'])
+    db.session.add(new_assignment)
+    db.session.commit()
+    return jsonify({'id': new_assignment.id, 'text': new_assignment.assignment_text, 'duedate': new_assignment.due_date})
+
+@app.route('/homework-submit', methods=['POST'])
+def homework_submit():
+    if request.files["homework"]:
+        homework_file = request.files["homework"]
+        filename = secure_filename(homework_file.filename)
+        homework_file.save(os.path.join(app.config['FILE_UPLOADS'], filename))
+        new_submission = AssignmentSubmission(user_id=current_user.get_id(),assignment_id=request.form['assignment_id'], file_location=filename)
+        db.session.add(new_submission)
+        db.session.commit()
+    return jsonify({'message': 'successfuly submitted'})
+
+@app.route('/retrieve-submissions/<assignment_id>', methods=['POST'])
+def retrieve_submissions(assignment_id):
+    assignments = AssignmentSubmission.query.filter(AssignmentSubmission.assignment_id==assignment_id)
+    return jsonify([{'name': User.query.filter(User.id==assignment.user_id).first().username, 'file': url_for('static', filename='submissions/'+str(assignment.file_location))} for assignment in assignments])
+
 
 @app.route('/retrieve-channels/<classroom>', methods=['POST'])
 def retrieve_channels(classroom):
@@ -174,7 +209,7 @@ def retrieve_channels(classroom):
 
 @app.route('/retrieve-messages/<channel>', methods=['POST'])
 def retrieve_messages(channel):
-    POSTS_COUNT_ONLOAD = 10
+    POSTS_COUNT_ONLOAD = 50
     messages = Message.query.filter(Message.channel_id==channel, Message.ischild==-1)
     return jsonify({'result': [ { 'id': message.id, 
         'content': message.contents, 
@@ -186,10 +221,10 @@ def retrieve_messages(channel):
             } for message in messages][-POSTS_COUNT_ONLOAD:] #returning the last ten messages in this channel
         })
 
-
 @app.route('/app/activity', methods=['POST'])
 def app_activity():
-    return render_template('activity.html')
+    messages = Message.query.filter(Message.author_id==current_user.get_id())
+    return render_template('activity.html', data=messages)
 
 @app.route('/app/meetings', methods=['POST'])
 def app_meetings():

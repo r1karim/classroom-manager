@@ -55,6 +55,15 @@
     position: relative;
 	display:block;
 }
+.user_chat_container {
+	width: 100%;
+	border-radius: 5px;
+	min-height: 600px;
+	max-height: 85vh;
+	overflow-y: scroll;
+    position: relative;
+	display:block;
+}
 .tab-content {
 	width: 100%;
 }
@@ -71,7 +80,7 @@
 	background-color: rgba(49, 170, 168, 1);
 	border-radius: 4px;
 	border-left: 4px solid grey;
-	width: 70%;
+	width: 99.99%;
 }
 .my_second_sidebar {
 	min-width: 100px;
@@ -83,7 +92,7 @@
 	border-color: white;
 	border-bottom: 4px solid rgb(70,71,117);
 	border-radius: 4px;
-	width: 80%;
+	width: 99.99%;
 	color: black;
 }
 #new_conversation_form {
@@ -147,7 +156,6 @@
 	color:white;
 	font-size: 24px;
 }
-
 .action-container {
 	width:30%;
 	margin: auto;
