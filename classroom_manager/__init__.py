@@ -6,7 +6,7 @@ from flask_socketio import SocketIO
 from os.path import join, dirname, realpath
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'Guys quit posting our key' # Our app key, DON'T POST ON GITHUB
+app.config['SECRET_KEY'] = 'R\x1a^-\x14?mq\x1ce\xf7\xefi\xb7\x0e\xa0\x02\x0c\xd6-$\x033\xc4'
 app.config['IMAGE_UPLOADS'] = join(dirname(realpath(__file__)), 'static/imgs/')
 app.config['FILE_UPLOADS'] = join(dirname(realpath(__file__)), 'static/submissions/')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
