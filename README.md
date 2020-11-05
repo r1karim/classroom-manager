@@ -17,7 +17,7 @@ NOTE: Make sure to run all commands in the same directory as the files!
     Run this command: `python run.py`
     
 3. Go to the website  
-    Go to this url: [http:127.0.0.7:5000](http:127.0.0.7:5000)
+    Go to this url: [http:127.0.0.7:5000](http://127.0.0.7:5000)
 
 4. Register
 
