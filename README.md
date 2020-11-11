@@ -11,7 +11,7 @@ Created by [Top Of Tech](http:www.github.com/Top-Of-Tech) and [adri711](http:www
 NOTE: Make sure to run all commands in the same directory as the files!
 
 1. Install requirements  
-    Run this command in your terminal or command prompt: `pip install requirements.txt`
+    Run this command in your terminal or command prompt: `pip install -r requirements.txt`
 
 2. Run the website  
     Run this command: `python run.py`
