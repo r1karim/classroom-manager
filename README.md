@@ -1,7 +1,7 @@
 # Classroom Manager
  
 ## Description
-Hey there! This is a website called Classroom Manager. You can create classrooms, have students join the classrooms, chat with your students, create notes, assign assignments, and more! You can dm 'Top Of Tech#4867' or 'adri711#7835' on discord if you have any thoughts.
+Hey there! This is a website called Classroom Manager. You can create classrooms, have fellow students join the classrooms, chat with your peers, create notes, assign assignments, and more! You can dm 'Top Of Tech#4867' or 'adri711#7835' on discord if you have any thoughts.
 
 Created by [Top Of Tech](http:www.github.com/Top-Of-Tech) and [adri711](http:www.github.com/adri711)
 
