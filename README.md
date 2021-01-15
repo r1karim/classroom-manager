@@ -37,12 +37,3 @@ NOTE: Make sure to run all commands in the same directory as the files!
 5. Sign in with your email and password
 
 6. Explore the app!
-
-
-## Screenshots
-![alt text](screenshots/screenshot1.PNG)
-![alt text](screenshots/screenshot2.PNG)
-![alt text](screenshots/screenshot3.PNG)
-![alt text](screenshots/screenshot4.PNG)
-![alt text](screenshots/screenshot5.PNG)
-![alt text](screenshots/screenshot6.PNG)
